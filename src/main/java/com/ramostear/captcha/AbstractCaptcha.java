@@ -10,15 +10,12 @@ import java.awt.geom.CubicCurve2D;
 import java.awt.geom.QuadCurve2D;
 import java.io.ByteArrayOutputStream;
 import java.io.OutputStream;
-import java.math.BigDecimal;
 import java.security.SecureRandom;
 
 /**
  * @author : ramostear/树下魅狐
  * @version : 1.0
- * @contact : ramostear@163.com/www.ramostear.com
- * @datetime : 2020/5/15/下午4:35
- * @dscription : 抽象的验证码类
+ *<p> 抽象的验证码类</p>
  */
 public abstract class AbstractCaptcha {
 

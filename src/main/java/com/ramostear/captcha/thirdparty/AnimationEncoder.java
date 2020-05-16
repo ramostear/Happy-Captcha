@@ -8,9 +8,7 @@ import java.io.*;
 /**
  * @author : ramostear/树下魅狐
  * @version : 1.0
- * @contact : ramostear@163.com/www.ramostear.com
- * @datetime : 2020/5/15/下午7:54
- * @dscription : 动画编码器
+ * <p>动画编码器</p>
  */
 public class AnimationEncoder {
     protected int width; // image size

@@ -3,8 +3,7 @@ package com.ramostear.captcha.thirdparty;
 /**
  * @author : ramostear/树下魅狐
  * @version : 1.0
- * @contact : ramostear@163.com/www.ramostear.com
- * @datetime : 2020/5/15/下午7:57
+ * <p>Quantizer</p>
  */
 public class Quantizer {
     protected static final int netsize = 256; /* number of colours used */

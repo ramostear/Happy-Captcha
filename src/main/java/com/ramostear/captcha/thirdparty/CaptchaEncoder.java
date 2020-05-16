@@ -6,8 +6,7 @@ import java.io.OutputStream;
 /**
  * @author : ramostear/树下魅狐
  * @version : 1.0
- * @contact : ramostear@163.com/www.ramostear.com
- * @datetime : 2020/5/15/下午7:59
+ * <p>动画编码器</p>
  */
 public class CaptchaEncoder {
     private static final int EOF = -1;

@@ -3,9 +3,7 @@ package com.ramostear.captcha.support;
 /**
  * @author : ramostear/树下魅狐
  * @version : 1.0
- * @contact : ramostear@163.com/www.ramostear.com
- * @datetime : 2020/5/15/下午4:39
- * @dscription : 验证码类型
+ * <p>验证码类型</p>
  */
 public enum CaptchaType {
     DEFAULT,

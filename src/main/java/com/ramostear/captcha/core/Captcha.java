@@ -12,9 +12,7 @@ import java.io.OutputStream;
 /**
  * @author : ramostear/树下魅狐
  * @version : 1.0
- * @contact : ramostear@163.com/www.ramostear.com
- * @datetime : 2020/5/15/下午8:08
- * @dscription : 通用的验证码
+ * <p>通用的验证码</p>
  */
 public class Captcha extends AbstractCaptcha {
 

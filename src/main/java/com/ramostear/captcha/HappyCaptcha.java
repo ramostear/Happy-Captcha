@@ -14,9 +14,7 @@ import java.io.IOException;
 /**
  * @author : ramostear/树下魅狐
  * @version : 1.0
- * @contact : ramostear@163.com/www.ramostear.com
- * @datetime : 2020/5/15/下午4:33
- * @dscription : Happy Captcha
+ * <p>Happy Captcha Application Class</p>
  */
 public class HappyCaptcha {
 
@@ -71,6 +69,29 @@ public class HappyCaptcha {
             return false;
         }
 
+    }
+
+    /**
+     * 校验验证码
+     * @param request           HttpServletRequest
+     * @param code              captcha code
+     * @param ignoreCase        Ignore Case
+     * @return                  boolean
+     */
+    public static boolean verification(HttpServletRequest request,String code,boolean ignoreCase){
+        if(code == null || code.trim().equals("")){
+            return false;
+        }
+        String captcha = (String)request.getSession().getAttribute(SESSION_KEY);
+        return ignoreCase?code.equalsIgnoreCase(captcha):code.equals(captcha);
+    }
+
+    /**
+     * remove captcha from session
+     * @param request   HttpServletRequest
+     */
+    public static void remove(HttpServletRequest request){
+        request.getSession().removeAttribute(SESSION_KEY);
     }
 
     public void setHeader(HttpServletResponse response) {

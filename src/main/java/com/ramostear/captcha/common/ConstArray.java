@@ -3,9 +3,7 @@ package com.ramostear.captcha.common;
 /**
  * @author : ramostear/树下魅狐
  * @version : 1.0
- * @contact : ramostear@163.com/www.ramostear.com
- * @datetime : 2020/5/15/下午4:56
- * @dscription : 常量数组
+ * <p>常量数组</p>
  */
 public class ConstArray {
 

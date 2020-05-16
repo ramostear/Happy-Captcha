@@ -5,9 +5,7 @@ import java.awt.*;
 /**
  * @author : ramostear/树下魅狐
  * @version : 1.0
- * @contact : ramostear@163.com/www.ramostear.com
- * @datetime : 2020/5/15/下午6:47
- * @dscription : 内置的字体库
+ * <p>内置的字体库</p>
  */
 public class Fonts {
 
