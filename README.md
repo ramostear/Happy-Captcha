@@ -86,7 +86,7 @@ HappyCaptcha在设计时力求过程的简洁，在默认情况下，你只需�
 @Controller
 public class HappyCaptchaController{
     @GetMapping("/captcha")
-    public void happyCaptcha(HttpServletRequest reqeust,HttpServletResponse response){
+    public void happyCaptcha(HttpServletRequest request,HttpServletResponse response){
         HappyCaptcha.require(request,response).build().finish();
     }
 }
