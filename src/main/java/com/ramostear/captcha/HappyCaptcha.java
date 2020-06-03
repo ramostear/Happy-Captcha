@@ -36,7 +36,7 @@ public class HappyCaptcha {
         return new Builder(request,response);
     }
 
-    public boolean finish() {
+    public AbstractCaptcha finish() {
         try {
             boolean flag = false;
             if(this.style.equals(CaptchaStyle.IMG)){
@@ -48,8 +48,7 @@ public class HappyCaptcha {
                 captcha.setFont(this.font);
                 setHeader(this.response);
                 this.request.getSession().setAttribute(SESSION_KEY,captcha.getCaptchaCode());
-                captcha.render(this.response.getOutputStream());
-                return true;
+                return captcha;
             }else if(this.style.equals(CaptchaStyle.ANIM)){
                 AnimCaptcha captcha = new AnimCaptcha();
                 captcha.setType(this.type);
@@ -59,14 +58,13 @@ public class HappyCaptcha {
                 captcha.setFont(this.font);
                 setHeader(this.response);
                 this.request.getSession().setAttribute(SESSION_KEY,captcha.getCaptchaCode());
-                captcha.render(this.response.getOutputStream());
-                return true;
+                return captcha;
             }else{
-                return false;
+                return null;
             }
         }catch (Exception e){
             e.printStackTrace();
-            return false;
+            return null;
         }
 
     }
