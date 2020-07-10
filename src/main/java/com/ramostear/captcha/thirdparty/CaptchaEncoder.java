@@ -1,7 +1,8 @@
 package com.ramostear.captcha.thirdparty;
 
+import com.ramostear.captcha.service.RenderTarget;
+
 import java.io.IOException;
-import java.io.OutputStream;
 
 /**
  * @author : ramostear/树下魅狐
@@ -72,7 +73,7 @@ public class CaptchaEncoder {
     int cur_accum = 0;
     int cur_bits = 0;
 
-    int masks[] =
+    int[] masks =
             {
                     0x0000,
                     0x0001,
@@ -121,7 +122,7 @@ public class CaptchaEncoder {
      * @param outs 输出流
      * @throws IOException IO异常
      */
-    void char_out(byte c, OutputStream outs) throws IOException {
+    void char_out(byte c, RenderTarget outs) throws IOException {
         accum[a_count++] = c;
         if (a_count >= 254)
             flush_char(outs);
@@ -135,7 +136,7 @@ public class CaptchaEncoder {
      * @param outs 输出流
      * @throws IOException IO异常
      */
-    void cl_block(OutputStream outs) throws IOException {
+    void cl_block(RenderTarget outs) throws IOException {
         cl_hash(hsize);
         free_ent = ClearCode + 2;
         clear_flg = true;
@@ -158,7 +159,7 @@ public class CaptchaEncoder {
      * @param outs      输出流
      * @throws IOException IO异常
      */
-    void compress(int init_bits, OutputStream outs) throws IOException {
+    void compress(int init_bits, RenderTarget outs) throws IOException {
         int fcode;
         int i /* = 0 */;
         int c;
@@ -235,7 +236,7 @@ public class CaptchaEncoder {
      * @param os 输出流
      * @throws IOException IO异常
      */
-    void encode(OutputStream os) throws IOException {
+    void encode(RenderTarget os) throws IOException {
         os.write(initCodeSize); // write "initial code size" byte
 
         remaining = imgW * imgH; // reset navigation variables
@@ -252,7 +253,7 @@ public class CaptchaEncoder {
      * @param outs 输出流
      * @throws IOException IO异常
      */
-    void flush_char(OutputStream outs) throws IOException {
+    void flush_char(RenderTarget outs) throws IOException {
         if (a_count > 0) {
             outs.write(a_count);
             outs.write(accum, 0, a_count);
@@ -291,7 +292,7 @@ public class CaptchaEncoder {
      * @param outs 输出流
      * @throws IOException IO异常
      */
-    void output(int code, OutputStream outs) throws IOException {
+    void output(int code, RenderTarget outs) throws IOException {
         cur_accum &= masks[cur_bits];
 
         if (cur_bits > 0)

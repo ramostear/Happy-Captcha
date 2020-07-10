@@ -1,8 +1,8 @@
-# Happy Captcha v 1.0.1使用教程
+# Happy Captcha v 1.1.0使用教程
 
 <img src="https://cdn.ramostear.com/20200517-dd314274729a49ae9f0af5acfb721661.png" style="zoom:150%;display:block;margin:1px auto;" />
 
-![](https://img.shields.io/badge/Name-HappyCaptcha-brightgreen) ![](https://img.shields.io/badge/Version-1.0.1-brightgreen) ![](https://img.shields.io/badge/JDK-JDK1.8-brightgreen) ![](https://img.shields.io/badge/License-Apache2.0-brightgreen) ![](https://img.shields.io/badge/Author-ramostear-brightgreen)
+![](https://img.shields.io/badge/Name-HappyCaptcha-brightgreen) ![](https://img.shields.io/badge/Version-1.1.0-brightgreen) ![](https://img.shields.io/badge/JDK-JDK1.8-brightgreen) ![](https://img.shields.io/badge/License-Apache2.0-brightgreen) ![](https://img.shields.io/badge/Author-ramostear-brightgreen)
 
 ___
 
@@ -25,14 +25,14 @@ Happy Capthca的源代码已托管到Github和Gitee，你可以访问下面的�
 <dependency>
   <groupId>com.ramostear</groupId>
   <artifactId>Happy-Captcha</artifactId>
-  <version>1.0.1</version>
+  <version>1.1.0</version>
 </dependency>
 ```
 
 **Gradle**
 
 ```tex
-implementation 'com.ramostear:Happy-Captcha:1.0.1'
+implementation 'com.ramostear:Happy-Captcha:1.1.0'
 ```
 
 
@@ -66,14 +66,14 @@ Happy Captcha提供了图片和动画两种展现形式，验证码内容包括�
 <dependency>
   <groupId>com.ramostear</groupId>
   <artifactId>Happy-Captcha</artifactId>
-  <version>1.0.1</version>
+  <version>1.1.0</version>
 </dependency>
 ```
 
 Gradle用户则可以通过引入如下的配置获取Happy Captcha:
 
 ```tex
-implementation 'com.ramostear:Happy-Captcha:1.0.1'
+implementation 'com.ramostear:Happy-Captcha:1.1.0'
 ```
 
 
@@ -88,6 +88,32 @@ public class HappyCaptchaController{
     @GetMapping("/captcha")
     public void happyCaptcha(HttpServletRequest request,HttpServletResponse response){
         HappyCaptcha.require(request,response).build().finish();
+    }
+}
+```
+
+要么
+
+```java
+@Controller
+public class HappyCaptchaController{
+    @GetMapping("/captcha")
+    public void happyCaptcha(HttpServletRequest request,HttpServletResponse response){
+        HappyCaptcha.create(SessionHolder.of(request,response)).build().generate().render();
+    }
+}
+```
+
+> 在1.1.0版之后，合同已更改 方法.finish() 被分成 .generate().render()
+
+使用Happy Catcha的另一种方法是定义SessionHolder bean并进一步使用它。
+
+```java
+@Configuration
+public class HappyCaptchaConfig{
+    @Bean
+    public SessionHolder sessionHolder(HttpServletRequest request,HttpServletResponse response){
+        return SessionHolder.of(request, response);
     }
 }
 ```
@@ -117,6 +143,26 @@ public class CaptchaController{
 }
 ```
 
+要么
+
+```java
+@Controller
+public class CaptchaController{
+ 
+    @Autowired
+    SessionHolder sessionHolder;
+    
+    @PostMapping("/verify")
+    public String verify(String code){
+        //Verification Captcha
+        boolean flag = HappyCaptcha.verification(sessionHolder,code,true);
+        if(flag){
+            //Other operations...
+        }
+    }
+}
+```
+
 > 如果在校验过程中需要忽略字母大小写，第三个参数设置为true，如果需要强校验，则设置为false。
 
 
@@ -136,6 +182,22 @@ public class HappyCaptchaController{
 }
 ```
 
+要么
+
+```java
+@Controller
+public class HappyCaptchaController{
+    
+    @Autowired
+    SessionHolder sessionHolder;
+    
+    @GetMapping("/remove/captcha")
+    public void removeCaptcha(){
+     	HappyCaptcha.remove(sessionHolder);   
+    }
+}
+```
+
 > 除HappyCaptcha提供的默认方法，你也可以在需要操作的地方，手动清理Session中存放的验证码，HappyCaptcha验证码的Key为“happy-captcha”。
 
 
@@ -149,9 +211,11 @@ public class HappyCaptchaController{
 HappyCaptcha提供两种验证码展现形式：图片和动画。默认的展现形式为图片，可以通过style()方法修改默认值。style()方法的值由CaptchaStyle类提供，可供选择的值有IMG和ANIM。style()使用示例如下：
 
 ```java
-HappyCaptcha.require(request,response)
+HappyCaptcha.create(request,response)
     	    .style(CaptchaStyle.ANIM)
-            .build().finish(); 
+            .build()
+            .generate()
+            .render(); 
 ```
 
 > 若展现形式为图片，则style(CaptchaStyle.IMG)可以省略。
@@ -180,9 +244,11 @@ HappyCaptcha一共提供了12种验证码类型，你可以自由选择其中的
 type()使用示例如下：
 
 ```java
-HappyCaptcha.require(request,response)
+HappyCaptcha.create(request,response)
     		.type(CaptchaType.CHINESE)
-    		.build().finish();
+    		.build()
+    		.generate()
+    		.render();
 ```
 
 
@@ -192,9 +258,11 @@ HappyCaptcha.require(request,response)
 length()方法用于设置验证码字符长度，默认情况下缺省值为5。你可以通过以下方式对验证码字符长度进行控制：
 
 ```java
-HappyCaptcha.require(request,response)
+HappyCaptcha.create(request,response)
     		.length(6)
-    		.build().finish();
+    		.build()
+    		.generate()
+    		.render();
 ```
 
 
@@ -204,9 +272,11 @@ HappyCaptcha.require(request,response)
 width()方法可对验证码图片的宽度进行调节，默认的缺省值为160。使用方式如下：
 
 ```java
-HappyCaptcha.require(request,response)
+HappyCaptcha.create(request,response)
     		.width(180)
-    		.build().finish();
+    		.build()
+    		.generate()
+    		.render();
 ```
 
 
@@ -216,9 +286,11 @@ HappyCaptcha.require(request,response)
 同width()方法一样，height()方法用于设置验证码图片的高度，默认缺省值为50。使用方式如下：
 
 ```java
-HappyCaptcha.require(request,response)
+HappyCaptcha.create(request,response)
     		.height(60)
-    		.build().finish();
+    		.build()
+    		.generate()
+    		.render();
 ```
 
 
@@ -228,9 +300,11 @@ HappyCaptcha.require(request,response)
 如果你想改变验证码的字体，可通过font()方法进行设置，默认缺省字体为微软雅黑。HappyCaptcha内置了四种字体，可以通过Fonts类进行调用。
 
 ```java
-HappyCaptcha.require(request,response)
+HappyCaptcha.create(request,response)
     		.font(Fonts.getInstance().zhFont())
-    		.build().finish();
+    		.build()
+    		.generate()
+    		.render();
 ```
 
 
@@ -242,14 +316,16 @@ HappyCaptcha.require(request,response)
 ```java
 @GetMapping("/captcha")
 public void captcha(HttpServletRequest req,HttpServletResponse res){
-    HappyCaptcha.require(req,res)
+    HappyCaptcha.create(req,res)
         		.style(CaptchaStyle.ANIM)			//设置展现样式为动画
         		.type(CaptchaType.CHINESE)			//设置验证码内容为汉字
         		.length(6)							//设置字符长度为6
         		.width(220)							//设置动画宽度为220
         		.height(80)							//设置动画高度为80
         		.font(Fonts.getInstance().zhFont())	//设置汉字的字体
-        		.build().finish();      			//生成并输出验证码
+        		.build()
+        		.generate()
+        		.render();      			//生成并输出验证码
 }
 ```
 

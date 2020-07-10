@@ -49,16 +49,9 @@ public class Fonts {
             this.enFont1 = Font.createFont(Font.TRUETYPE_FONT, getClass().getResourceAsStream("/"+FONT_FAMILY[2])).deriveFont(Font.ITALIC,32F);
             this.enFont2 = Font.createFont(Font.TRUETYPE_FONT, getClass().getResourceAsStream("/"+FONT_FAMILY[3])).deriveFont(Font.ITALIC,32F);
         } catch (Exception e) {
-            e.printStackTrace();
-            this.defaultFont = _default();
-            this.zhFont = _default();
-            this.enFont1 = _default();
-            this.enFont2 = _default();
+            throw new RuntimeException(e);
         }
 
     }
 
-    private static Font _default(){
-        return new Font("Arial",Font.ITALIC,32);
-    }
 }
