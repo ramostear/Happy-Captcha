@@ -1,5 +1,8 @@
 package com.ramostear.captcha.thirdparty;
 
+import com.ramostear.captcha.service.OutputStreamRenderTarget;
+import com.ramostear.captcha.service.RenderTarget;
+
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferByte;
@@ -18,7 +21,7 @@ public class AnimationEncoder {
     protected int repeat = -1; // no repeat
     protected int delay = 0; // frame delay (hundredths)
     protected boolean started = false; // ready to output frames
-    protected OutputStream out;
+    protected RenderTarget out;
     protected BufferedImage image; // current frame
     protected byte[] pixels; // BGR byte array from frame
     protected byte[] indexedPixels; // converted frame indexed to palette
@@ -87,7 +90,7 @@ public class AnimationEncoder {
     /**
      * Adds next GIF frame.  The frame is not written immediately, but is
      * actually deferred until the next frame is received so that timing
-     * data can be inserted.  Invoking <code>finish()</code> flushes all
+     * data can be inserted.  Invoking <code>generate()</code> flushes all
      * frames.  If <code>setSize</code> was not invoked, the size of the
      * first image is used for all subsequent frames.
      *
@@ -136,7 +139,7 @@ public class AnimationEncoder {
             out.flush();
             ok = true;
         } catch (IOException e) {
-            e.printStackTrace();
+            throw new UncheckedIOException(e);
         }
 
         return ok;
@@ -230,19 +233,20 @@ public class AnimationEncoder {
      * Initiates GIF file creation on the given stream.  The stream
      * is not closed automatically.
      *
-     * @param os OutputStream on which GIF images are written.
+     * @param renderTarget RenderTarget on which GIF images are written.
      * @return false if initial write failed.
      */
-    public boolean start(OutputStream os) {
-        if (os == null) return false;
+    public boolean start(RenderTarget renderTarget) {
+        if (renderTarget == null || renderTarget.getTarget() == null) return false;
         boolean ok = true;
         closeStream = false;
-        out = os;
+        out = renderTarget;
         try {
             writeString("GIF89a"); // header
         } catch (IOException e) {
             ok = false;
         }
+
         return started = ok;
     }
 
@@ -255,7 +259,7 @@ public class AnimationEncoder {
     public boolean start(String file) {
         boolean ok;
         try {
-            out = new BufferedOutputStream(new FileOutputStream(file));
+            out = new OutputStreamRenderTarget(new BufferedOutputStream(new FileOutputStream(file)));
             ok = start(out);
             closeStream = true;
         } catch (IOException e) {

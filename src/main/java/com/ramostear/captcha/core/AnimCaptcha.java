@@ -1,13 +1,15 @@
 package com.ramostear.captcha.core;
 
 import com.ramostear.captcha.AbstractCaptcha;
+import com.ramostear.captcha.service.RenderTarget;
+import com.ramostear.captcha.service.SessionHolder;
 import com.ramostear.captcha.support.CaptchaType;
 import com.ramostear.captcha.thirdparty.AnimationEncoder;
 
 import java.awt.*;
 import java.awt.geom.CubicCurve2D;
 import java.awt.image.BufferedImage;
-import java.io.OutputStream;
+import java.io.IOException;
 
 /**
  * @author : ramostear/树下魅狐
@@ -16,10 +18,11 @@ import java.io.OutputStream;
  */
 public class AnimCaptcha extends AbstractCaptcha {
 
-    public void render(OutputStream out) {
+    @Override
+    public void render(RenderTarget renderTarget) {
         char[] codes = text();
         Color[] colors = new Color[length];
-        for(int i=0;i<length;i++){
+        for (int i = 0; i < length; i++) {
             colors[i] = color();
         }
         // 随机生成贝塞尔曲线参数
@@ -37,26 +40,25 @@ public class AnimCaptcha extends AbstractCaptcha {
         animation.setQuality(180);
         animation.setDelay(100);
         animation.setRepeat(0);
-        animation.start(out);
-        for(int i=0;i<length;i++){
-            BufferedImage img = drawImage(colors,codes,i,bezier);
+        boolean start = animation.start(renderTarget);
+        if(!start) throw new IllegalStateException("Gif creation error");
+
+        for (int i = 0; i < length; i++) {
+            BufferedImage img = drawImage(colors, codes, i, bezier);
             animation.addFrame(img);
             img.flush();
         }
         animation.finish();
-
     }
 
-    public String toBase64() {
+    @Override
+    public String renderToBase64() throws IOException {
         return toBase64("data:image/png;base64,");
     }
 
-    public BufferedImage drawImage(Color[] colors,char[] chars,int index,int[][] bezier) {
-        BufferedImage image = new BufferedImage(width,height,BufferedImage.TYPE_INT_BGR);
+    private BufferedImage drawImage(Color[] colors, char[] chars, int index, int[][] bezier) {
+        BufferedImage image = createImage();
         Graphics2D g = (Graphics2D) image.getGraphics();
-        g.setColor(Color.WHITE);
-        g.fillRect(0,0,width,height);
-        g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.1f * nextInt(10)));
         drawOval(g);
         drawLine(g);
@@ -68,10 +70,10 @@ public class AnimCaptcha extends AbstractCaptcha {
 
         g.setFont(getFont());
         FontMetrics fontMetrics = g.getFontMetrics();
-        int fw = (width/chars.length) - 2;
+        int fw = (width / chars.length) - 2;
         int fm = (fw - (int) fontMetrics.getStringBounds("W", g).getWidth()) / 2;
-        for(int i=0;i< chars.length;i++){
-            AlphaComposite alpha = AlphaComposite.getInstance(AlphaComposite.SRC_OVER,getAlpha(index,i));
+        for (int i = 0; i < chars.length; i++) {
+            AlphaComposite alpha = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, getAlpha(index, i));
             g.setComposite(alpha);
             g.setColor(colors[i]);
             int fY = height - ((height - (int) fontMetrics.getStringBounds(String.valueOf(chars[i]), g).getHeight()) >> 1);  // 文字的纵坐标
@@ -88,36 +90,39 @@ public class AnimCaptcha extends AbstractCaptcha {
         return num >= length ? (num * r - s) : num * r;
     }
 
-    public AnimCaptcha(){}
+    public AnimCaptcha(SessionHolder sessionHolder) {
+        super(sessionHolder);
+    }
 
-    public AnimCaptcha(int width,int height){
-        this();
+    public AnimCaptcha(SessionHolder sessionHolder, int width, int height) {
+        this(sessionHolder);
         setWidth(width);
         setHeight(height);
     }
 
-    public AnimCaptcha(int width,int height,int length){
-        this(width, height);
+    public AnimCaptcha(SessionHolder sessionHolder, int width, int height, int length) {
+        this(sessionHolder, width, height);
         setLength(length);
     }
 
-    public AnimCaptcha(int width, int height, CaptchaType type){
-        this(width, height);
+    public AnimCaptcha(SessionHolder sessionHolder, int width, int height, CaptchaType type) {
+        this(sessionHolder, width, height);
         setType(type);
     }
 
-    public AnimCaptcha(int width,int height,CaptchaType type,int length){
-        this(width, height, type);
+    public AnimCaptcha(SessionHolder sessionHolder, int width, int height, CaptchaType type, int length) {
+        this(sessionHolder, width, height, type);
         setLength(length);
     }
 
-    public AnimCaptcha(int width,int height,CaptchaType type,Font font){
-        this(width, height, type);
+    public AnimCaptcha(SessionHolder sessionHolder, int width, int height, CaptchaType type, Font font) {
+        this(sessionHolder, width, height, type);
         setFont(font);
     }
 
-    public AnimCaptcha(int width, int height, CaptchaType type, Font font,int length){
-        this(width, height, type, font);
+    public AnimCaptcha(SessionHolder sessionHolder, int width, int height, CaptchaType type, Font font, int length) {
+        this(sessionHolder, width, height, type, font);
         setLength(length);
     }
+
 }
